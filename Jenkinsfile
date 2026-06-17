@@ -10,7 +10,6 @@ pipeline {
     }
 
     environment {
-        MAVEN_OPTS = '-Djdk.instrument.traceUsage'
         EMAIL_TO = 'srengty@gmail.com'
     }
 
@@ -24,23 +23,22 @@ pipeline {
 
         stage('Build') {
             steps {
-                bat 'mvn clean package -DskipTests'
+                sh 'mvn clean package -DskipTests'
             }
         }
 
         stage('Test (SQLite)') {
             steps {
-                bat 'mvn test -Dspring.profiles.active=test'
+                sh 'mvn test -Dspring.profiles.active=test'
             }
         }
 
         stage('Deploy with Ansible') {
             steps {
-                bat '''
-                echo Deploying application with Ansible...
-                docker exec demo-web-1 ansible-playbook \
-                  -i /app/ansible/inventory.ini \
-                  /app/ansible/playbook.yml
+                sh '''
+                ansible-playbook \
+                  -i ansible/inventory.ini \
+                  ansible/playbook.yml
                 '''
             }
         }
@@ -48,19 +46,9 @@ pipeline {
 
     post {
         failure {
-            mail to: "${EMAIL_TO}, ${env.GIT_AUTHOR_EMAIL}",
-                subject: "Build Failed: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
-                body: """
-Build failed!
-
-Job: ${env.JOB_NAME}
-Build Number: ${env.BUILD_NUMBER}
-Commit by: ${env.GIT_AUTHOR_NAME} (${env.GIT_AUTHOR_EMAIL})
-Branch: ${env.GIT_BRANCH}
-
-Check details at:
-${env.BUILD_URL}
-"""
+            mail to: "${EMAIL_TO}",
+                 subject: "Build Failed: ${env.JOB_NAME}",
+                 body: "Build failed. Check Jenkins console output."
         }
 
         success {
@@ -68,3 +56,4 @@ ${env.BUILD_URL}
         }
     }
 }
+
