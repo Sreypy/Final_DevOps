@@ -9,7 +9,6 @@
         dest: /app
         force: yes
 
-    - name: Build application
-      shell: mvn clean package -DskipTests
-      args:
-        chdir: /app
+    - name: Restart application
+      shell: |
+        systemctl restart myapp
