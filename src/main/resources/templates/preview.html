@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout('ID Card Preview', ~{::section})}">
+<body>
+<section>
+    <div style="display: flex; flex-direction: column; align-items: center; gap: 3rem;">
+        
+        <!-- ID CARD COMPONENT -->
+        <div style="position: relative; width: 350px; background: white; border-radius: 1.25rem; overflow: hidden; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);">
+            <!-- Card Header Pattern -->
+            <div style="background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%); padding: 2rem 1.5rem 4rem 1.5rem; color: white; text-align: center;">
+                <h3 style="margin: 0; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.3em; opacity: 0.9;">Identity Card</h3>
+                <h2 style="margin: 0.25rem 0 0 0; font-size: 1.25rem; font-weight: 700;">ORGANIZATION NAME</h2>
+            </div>
+            
+            <!-- Profile Info Area -->
+            <div style="padding: 0 1.5rem 2rem 1.5rem; margin-top: -3rem; text-align: center; display: flex; flex-direction: column; align-items: center;">
+                <!-- Photo -->
+                <div style="width: 120px; height: 120px; border-radius: 50%; border: 6px solid white; background: #f3f4f6; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); overflow: hidden; display: flex; align-items: center; justify-content: center;">
+                    <img th:if="${profile.photoFileName}" th:src="@{'/uploads/' + ${profile.photoFileName}}" style="width: 100%; height: 100%; object-fit: cover;">
+                    <span th:unless="${profile.photoFileName}" style="font-size: 3rem; opacity: 0.5;">👤</span>
+                </div>
+
+                <h2 th:text="${profile.fullName}" style="margin: 1rem 0 0.1rem 0; font-size: 1.5rem; color: #111827;"></h2>
+                <span th:text="${profile.type}" style="font-size: 0.75rem; font-weight: 700; color: #4f46e5; text-transform: uppercase; letter-spacing: 0.1em; background: #eef2ff; padding: 0.25rem 0.75rem; border-radius: 1rem; margin-bottom: 1.5rem;"></span>
+
+                <div style="width: 100%; text-align: left; background: #f9fafb; padding: 1.25rem; border-radius: 0.75rem; border: 1px solid #f3f4f6;">
+                    <div style="margin-bottom: 0.75rem;">
+                        <label style="font-size: 0.65rem; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em; display: block; margin-bottom: 0.1rem;">Registration Number</label>
+                        <div th:text="${profile.registrationNumber}" style="font-weight: 600; font-size: 0.9375rem;"></div>
+                    </div>
+                    <div style="margin-bottom: 0.75rem;">
+                        <label style="font-size: 0.65rem; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em; display: block; margin-bottom: 0.1rem;">Department</label>
+                        <div th:text="${profile.department}" style="font-weight: 600; font-size: 0.9375rem;"></div>
+                    </div>
+                    <div>
+                        <label style="font-size: 0.65rem; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em; display: block; margin-bottom: 0.1rem;">Contact Email</label>
+                        <div th:text="${profile.email}" style="font-weight: 600; font-size: 0.9375rem;"></div>
+                    </div>
+                </div>
+
+                <!-- Footer QR -->
+                <div style="margin-top: 2rem; width: 100%; display: flex; justify-content: center; align-items: center; gap: 1rem;">
+                    <div style="padding: 0.5rem; background: white; border: 1px solid #e5e7eb; border-radius: 0.5rem;">
+                         <img th:src="@{'/uploads/qr_' + ${profile.id} + '.png'}" style="width: 60px; height: 60px;">
+                    </div>
+                    <div style="text-align: left;">
+                        <div style="font-size: 0.65rem; font-weight: 700; color: #9ca3af; text-transform: uppercase;">ID Verified</div>
+                        <div style="font-size: 0.6rem; color: #d1d5db;" th:text="${#temporals.format(profile.createdAt, 'MMM yyyy')}"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Bottom Border Accent -->
+            <div style="height: 6px; background: linear-gradient(90deg, #4f46e5 0%, #7c3aed 100%);"></div>
+        </div>
+
+        <div style="display: flex; gap: 1rem;">
+            <a th:href="@{'/api/pdf/' + ${profile.id}}" class="btn btn-primary" style="padding: 0.75rem 2rem;">
+                <span>📥</span> Download Official PDF
+            </a>
+            <a href="/" class="btn btn-secondary" style="padding: 0.75rem 2rem;">
+                Back to List
+            </a>
+        </div>
+
+    </div>
+</section>
+</body>
+</html>
