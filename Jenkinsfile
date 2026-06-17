@@ -5,6 +5,10 @@ pipeline {
         pollSCM('H/5 * * * *')
     }
 
+    tools {
+        maven 'Maven3'   // ✅ matches the name you set in Jenkins Tools
+    }
+
     environment {
         MAVEN_OPTS = '-Djdk.instrument.traceUsage'
     }
