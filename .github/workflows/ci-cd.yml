@@ -40,3 +40,10 @@ jobs:
             Commit: ${{ github.sha }}
             Developer: ${{ github.actor }}
 
+      - name: Deploy with Ansible
+        if: success()
+        run: |
+          sudo apt update
+          sudo apt install -y ansible
+          ansible-playbook -i ansible/inventory.ini ansible/playbook.yml
+
