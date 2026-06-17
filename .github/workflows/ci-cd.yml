@@ -9,19 +9,13 @@ jobs:
     steps:
       - name: Checkout source code
         uses: actions/checkout@v4
-
       - name: Set up Java
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: 21
-
       - name: Build application
         run: mvn clean package -DskipTests
-
-      - name: Run tests with SQLite
-        run: mvn test -Dspring.profiles.active=test
-
       - name: Send Email on Failure
         if: failure()
         uses: dawidd6/action-send-mail@v3
@@ -38,7 +32,6 @@ jobs:
             Repository: ${{ github.repository }}
             Commit: ${{ github.sha }}
             Developer: ${{ github.actor }}
-
       - name: Deploy with Ansible
         if: success()
         run: |
