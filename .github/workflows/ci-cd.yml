@@ -9,13 +9,19 @@ jobs:
     steps:
       - name: Checkout source code
         uses: actions/checkout@v4
+
       - name: Set up Java
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: 21
+
       - name: Build application
         run: mvn clean package -DskipTests
+
+      - name: Run tests with SQLite
+        run: mvn test -Dspring.profiles.active=test
+
       - name: Send Email on Failure
         if: failure()
         uses: dawidd6/action-send-mail@v3
@@ -24,17 +30,19 @@ jobs:
           server_port: 587
           username: ${{ secrets.SMTP_USER }}
           password: ${{ secrets.SMTP_PASS }}
-          subject: Build or Test Failed
+          subject: "Build or Test Failed - ${{ github.repository }}"
           to: srengty@gmail.com
           cc: ${{ github.actor }}@gmail.com
           body: |
-            Build or test failed.
+            Build or test failed!
             Repository: ${{ github.repository }}
             Commit: ${{ github.sha }}
             Developer: ${{ github.actor }}
+
+      # ✅ Skip ansible for now since no real server to deploy to
       - name: Deploy with Ansible
         if: success()
         run: |
           sudo apt update
           sudo apt install -y ansible
-          ansible-playbook -i ansible/inventory.ini ansible/playbook.yml
+          ansible-playbook -i ansible/inventory.ini ansible/playbook.yml --connection=local
