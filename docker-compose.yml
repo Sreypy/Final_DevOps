@@ -1,0 +1,35 @@
+services:
+  web:
+    build: .
+    ports:
+      - "8085:8085"   # ✅ Fixed: matches server.port=8085
+    depends_on:
+      db:
+        condition: service_healthy   # ✅ Fixed: waits for DB to be ready
+    networks:
+      - app-network
+
+  db:
+    image: mysql:8.0
+    container_name: mysql-db
+    environment:
+      MYSQL_DATABASE: "A_DOEUNG_Sreypy_db"   # ✅ Fixed: no hyphens
+      MYSQL_ROOT_PASSWORD: "Hello@123"
+    ports:
+      - "3307:3306"
+    networks:
+      - app-network
+    volumes:
+      - db-data:/var/lib/mysql
+    healthcheck:                              # ✅ Added: health check
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-pHello@123"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  db-data:
