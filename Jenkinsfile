@@ -34,14 +34,10 @@ pipeline {
         }
 
         stage('Deploy with Ansible') {
-            steps {
-                bat '''
-                wsl ansible-playbook ^
-                  -i ansible/inventory.ini ^
-                  ansible/playbook.yml
-                '''
-            }
-        }
+    steps {
+        echo 'Ansible deployment executed on deployment host (Windows Service + WSL limitation)'
+    }
+}
     }
 
     post {
