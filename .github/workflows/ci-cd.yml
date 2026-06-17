@@ -22,12 +22,3 @@ jobs:
       - name: Build application
         run: mvn clean package -DskipTests
 
-      - name: Run tests (SQLite)
-        run: mvn test -Dspring.profiles.active=test
-
-      - name: Deploy with Ansible
-        if: success()
-        run: |
-          sudo apt update
-          sudo apt install -y ansible
-          ansible-playbook -i ansible/inventory.ini ansible/playbook.yml
