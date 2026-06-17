@@ -1,14 +1,11 @@
 name: CI/CD Pipeline
-
 on:
   push:
     branches:
       - main
-
 jobs:
   build-test-deploy:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout source code
         uses: actions/checkout@v4
@@ -21,6 +18,9 @@ jobs:
 
       - name: Build application
         run: mvn clean package -DskipTests
+
+      - name: Run tests with SQLite
+        run: mvn test -Dspring.profiles.active=test
 
       - name: Send Email on Failure
         if: failure()
@@ -35,7 +35,6 @@ jobs:
           cc: ${{ github.actor }}@gmail.com
           body: |
             Build or test failed.
-
             Repository: ${{ github.repository }}
             Commit: ${{ github.sha }}
             Developer: ${{ github.actor }}
@@ -46,4 +45,3 @@ jobs:
           sudo apt update
           sudo apt install -y ansible
           ansible-playbook -i ansible/inventory.ini ansible/playbook.yml
-
