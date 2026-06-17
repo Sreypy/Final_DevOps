@@ -6,7 +6,7 @@ pipeline {
     }
 
     tools {
-        maven 'Maven3'   // ✅ matches the name you set in Jenkins Tools
+        maven 'Maven3'
     }
 
     environment {
@@ -34,7 +34,8 @@ pipeline {
 
         stage('Deploy with Ansible') {
             steps {
-                bat 'ansible-playbook -i ansible/inventory.ini ansible/playbook.yml'
+                // ✅ Run ansible inside the web container instead
+                bat 'docker exec demo-web-1 bash -c "apt-get install -y ansible && ansible-playbook -i /app/ansible/inventory.ini /app/ansible/playbook.yml"'
             }
         }
     }
