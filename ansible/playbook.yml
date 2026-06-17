@@ -9,6 +9,6 @@
         dest: /app
         force: yes
 
-    - name: Restart application
-      shell: |
-        systemctl restart myapp
+    - name: Deployment completed
+      debug:
+        msg: "Application deployed successfully"
