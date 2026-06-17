@@ -22,3 +22,21 @@ jobs:
       - name: Build application
         run: mvn clean package -DskipTests
 
+      - name: Send Email on Failure
+        if: failure()
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 587
+          username: ${{ secrets.SMTP_USER }}
+          password: ${{ secrets.SMTP_PASS }}
+          subject: Build or Test Failed
+          to: srengty@gmail.com
+          cc: ${{ github.actor }}@gmail.com
+          body: |
+            Build or test failed.
+
+            Repository: ${{ github.repository }}
+            Commit: ${{ github.sha }}
+            Developer: ${{ github.actor }}
+
