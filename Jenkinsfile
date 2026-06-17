@@ -2,7 +2,6 @@ pipeline {
     agent any
 
     triggers {
-        // Poll SCM every 5 minutes
         pollSCM('H/5 * * * *')
     }
 
@@ -19,19 +18,19 @@ pipeline {
 
         stage('Build') {
             steps {
-                sh 'mvn clean package -DskipTests'
+                bat 'mvn clean package -DskipTests'
             }
         }
 
         stage('Test') {
             steps {
-                sh 'mvn test -Dspring.profiles.active=test'
+                bat 'mvn test -Dspring.profiles.active=test'
             }
         }
 
         stage('Deploy with Ansible') {
             steps {
-                sh 'ansible-playbook -i ansible/inventory.ini ansible/playbook.yml'
+                bat 'ansible-playbook -i ansible/inventory.ini ansible/playbook.yml'
             }
         }
     }
@@ -39,7 +38,7 @@ pipeline {
     post {
         failure {
             mail to: "srengty@gmail.com, ${env.GIT_AUTHOR_EMAIL}",
-                subject: "❌ Build Failed: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+                subject: "Build Failed: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
                 body: """
                     Build failed!
 
@@ -53,7 +52,7 @@ pipeline {
         }
 
         success {
-            echo '✅ Build, test and deployment completed successfully!'
+            echo 'Build, test and deployment completed successfully!'
         }
     }
 }
