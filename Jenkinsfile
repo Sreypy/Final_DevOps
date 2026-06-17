@@ -23,21 +23,21 @@ pipeline {
 
         stage('Build') {
             steps {
-                sh 'mvn clean package -DskipTests'
+                bat 'mvn clean package -DskipTests'
             }
         }
 
         stage('Test (SQLite)') {
             steps {
-                sh 'mvn test -Dspring.profiles.active=test'
+                bat 'mvn test -Dspring.profiles.active=test'
             }
         }
 
         stage('Deploy with Ansible') {
             steps {
-                sh '''
-                ansible-playbook \
-                  -i ansible/inventory.ini \
+                bat '''
+                wsl ansible-playbook ^
+                  -i ansible/inventory.ini ^
                   ansible/playbook.yml
                 '''
             }
@@ -47,12 +47,12 @@ pipeline {
     post {
         failure {
             mail to: "${EMAIL_TO}",
-                 subject: "Build Failed: ${env.JOB_NAME}",
-                 body: "Build failed. Check Jenkins console output."
+                subject: "Build Failed: ${env.JOB_NAME}",
+                body: "Check Jenkins build logs."
         }
 
         success {
-            echo 'Build, test, and deployment completed successfully ✅'
+            echo 'Build, test and deployment completed successfully ✅'
         }
     }
 }
